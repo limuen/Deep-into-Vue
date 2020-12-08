@@ -49,7 +49,7 @@ export default {
 
       this.$refs.loginForm.validate(isValid => {
         create(Notice, {
-          title: '老杨喊你来搬砖',
+          title: '老艾头喊你来搬砖',
           message: isValid ? '请求登录' : '校验失败'
         }).show()
         // if (isValid) {
