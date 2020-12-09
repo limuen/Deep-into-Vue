@@ -10,17 +10,18 @@ function create(Component, props) {
   // 1.构建Component的实例
   const Ctor = Vue.extend(Component)
   const vm = new Ctor({
+    // propsData 选项传递属性
     propsData: props
   }).$mount();
   // 2.挂载到body上
   document.body.appendChild(vm.$el)
 
   vm.remove = () => {
+    // 移除dom
     document.body.removeChild(vm.$el)
+    // 销毁组件
     vm.$destroy()
   }
-
-
 
   /**
    * Vue.render
