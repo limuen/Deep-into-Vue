@@ -26,7 +26,6 @@ class Store {
             Object.defineProperty(store.getters, key, {
                 get: () => store._vm[key]
             })
-
         })
 
 
