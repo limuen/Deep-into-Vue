@@ -23,7 +23,7 @@ const routes = [
     children: [
       {
         path: "/about/info",
-        component: { render(h) { return h('div', 'info page') } }
+        component: () => import("../views/Aboutinfo.vue"),
       },
     ]
   },

@@ -41,7 +41,7 @@ class VueRouter {
     onHashChange() {
         // 只要 # 后面部分
         this.current = window.location.hash.slice(1)
-        console.log(this.current)
+        // matched重新清空，开始下一次匹配
         this.matched = []
         this.match()
     }
@@ -57,10 +57,8 @@ class VueRouter {
             }
             // 假设除了首页 有children
             if(route.path !== '/' && this.current.indexOf(route.path) != -1) {
-                console.log(route, 'route')
                 this.matched.push(route)
                 if(route.children) {
-                    console.log(route.children, '假设除了首页 有children')
                     this.match(route.children)
                 }
                 return
@@ -110,7 +108,6 @@ VueRouter.install = function(Vue) {
             this.$vnode.data.routerView = true;
             let depth = 0
             let parent = this.$parent
-            console.log(this.$vnode.data, parent,  'vnodeData')
             while(parent) {
                 const vnodeData = parent.$vnode && parent.$vnode.data
                 if(vnodeData) {
@@ -118,13 +115,11 @@ VueRouter.install = function(Vue) {
                         // 说明当前parent是一个router-view
                         // 当前的深度应该++
                         depth++
-                        console.log(depth, 'depth')
                     }
                 }
                 parent = parent.$parent
             }
 
-            console.log(parent, 'parent')
 
             // 挂载到原型直接访问this.$router 
             // 找到当前url对应的组件
@@ -132,10 +127,9 @@ VueRouter.install = function(Vue) {
             // const { routeMap, current } = this.$router
 
             let component = null
-
+            console.log(this.$router.matched[depth], 'this.$router.matched')
             const route = this.$router.matched[depth]
             if(route) {
-                console.log(route, 'route')
                 component = route.component
             }
             // 渲染传入组件

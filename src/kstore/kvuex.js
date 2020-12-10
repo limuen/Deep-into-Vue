@@ -7,16 +7,38 @@ class Store {
 
         this._mutations = options.mutations
         this._actions = options.actions
+        this._warppedGetters = options.getters
+
+        // 定义computed选项
+        const computed= {}
+        this.getters = {}
+        const store = this
+        // {doubleCounter(state){}}
+        Object.keys(this._warppedGetters).forEach(key => {
+            // 获取用户定义的getter
+            const fn = store._warppedGetters[key]
+            // 转换为computed可以使用无参形式
+            computed[key] = function() {
+                return fn(store.state)
+            }
+
+            // 为getters定义只读属性
+            Object.defineProperty(store.getters, key, {
+                get: () => store._vm[key]
+            })
+
+        })
+
+
+
 
         // this.$options = options
         // 创建响应式的state
         // this.$store.state.xxxx
         this._vm = new _Vue({
-            data() {
-                return {
-                    // 不希望被代理(data中的值，vue实例就可以直接访问，加上就不被代理)，就加上$
-                    $$state: options.state
-                }
+            data: {
+                // 不希望被Vue代理(data中的值，vue实例就可以直接访问，加上就不被代理)，就加上$
+                $$state: options.state
             },
             computed
         })
@@ -26,21 +48,21 @@ class Store {
         this.dispatch = this.dispatch.bind(this)
 
         // getters
-        this.getters = {}
-        // 实用计算属性缓存getter
-        let computed= {}
-        // 代理getter
-        Object.keys(options.getters).forEach((key)=> {
-            computed[key] = function() {
-                return options.getters[key](options.state)
-            }
+        // this.getters = {}
+        // // 实用计算属性缓存getter
+        // let computed= {}
+        // // 代理getter
+        // Object.keys(options.getters).forEach((key)=> {
+        //     computed[key] = function() {
+        //         return options.getters[key](options.state)
+        //     }
 
-            Object.defineProperty(this.getters, key, {
-                get: () => {
-                    return this._vm[key]
-                }
-            })
-        })
+        //     Object.defineProperty(this.getters, key, {
+        //         get: () => {
+        //             return this._vm[key]
+        //         }
+        //     })
+        // })
     }
 
     get state() {
