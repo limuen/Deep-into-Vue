@@ -77,5 +77,44 @@ class KVue {
 
         // 2.为$data做代理
         proxy(this, '$data')
+
+        // 3.编译模版
+        new Compile('#app', this)
     }
+}
+
+// 
+class Compile {
+    // el: 宿主元素，vm：KVue实例
+    constructor(el, vm) {
+        this.$el = document.querySelector(el)
+        this.$vm = vm
+
+        //把用户在模版里面的{{}}解析
+        if(this.$el) {
+            this.compile(this.$el)
+        }
+    }
+
+    compile(el) {
+        // el是宿主元素
+        // 遍历el，判断当前遍历元素的类型
+        el.childNodes.forEach(node => {
+            // nodeType：1.元素节点 3:文本节点
+            if(node.nodeType === 1) {
+                console.log('编译元素', node.nodeName)
+            } else if(this.isInter(node)){
+                // 文本 {{xxx}}
+                console.log('编译文本', node.textContent, RegExp.$1)
+            } else {
+
+            }
+        })
+    }
+
+    // 判断插值的表达式
+    isInter(node) {
+        return node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)
+    }
+
 }
