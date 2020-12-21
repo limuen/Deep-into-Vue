@@ -25,15 +25,17 @@ function defineReactive(obj, key, val) {
                 // 通知更新
                 dep.notify()
             }
-        },
+        }
     })
 }
+
 // 遍历指定数据对象的每个key，拦截他们
 function observe(obj) {
     if(typeof obj !== 'object' || obj === null) {
-        return 
+        return obj
     }
     // 每遇到一个对象就创建一个Observe的实例
+    // 创建一个Observer实例去做拦截操作
     new Observe(obj)
 }
 
@@ -144,7 +146,7 @@ class Compile {
             // 如果指令 k-xxx="yyy"
             const attrName = attr.name // k-xxx
             const exp = attr.value // yyy 
-            if(this.isDirevtive(attrName)) {
+            if(this.isDirective(attrName)) {
                 const dir = attrName.substring(2) // 获取到xxx
                 // 指令实际操作方法
                 this[dir] && this[dir](node, exp)
@@ -152,7 +154,7 @@ class Compile {
         })
     }
 
-    isDirevtive(attr) {
+    isDirective(attr) {
         return attr.indexOf('k-') === 0
     }
 
@@ -178,7 +180,7 @@ class Compile {
 
     // 提取update, 初始化和更新函数创建
     update(node, exp, dir) {
-        const fn  = this[dir+'Update']
+        const fn  = this[dir + 'Updater']
         // 初始化
         fn && fn(node, this.$vm[exp])
         
