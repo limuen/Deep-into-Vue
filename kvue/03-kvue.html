@@ -1,8 +1,10 @@
 <meta charset="UTF-8">
 <div id="app">
-  <p>{{counter}}</p>
+  <p @click="add">{{counter}}</p>
   <p k-text="counter"></p>
   <p k-html="desc"></p>
+  <!-- k-model -->
+  <input type="text" k-model="desc">
 </div>
 
 <!-- <script src="../node_modules/vue/dist/vue.js"></script> -->
@@ -15,9 +17,14 @@
       counter: 1,
       desc: '<span style="color: red">艾阳</span>'
     },
+    methods: {
+      add() {
+        this.counter++
+      }
+    },
   })
-  setInterval(() => {
-    app.counter++
-  }, 1000);
+  // setInterval(() => {
+  //   app.counter++
+  // }, 1000);
 
 </script>

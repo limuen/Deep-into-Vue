@@ -64,7 +64,11 @@ class Observe {
         this.value = value
         // 判断value类型再进行obj或者arr操作
         // 遍历对象
-        this.walk(value)
+
+        // 判断其类型
+        if(typeof value === 'object') {
+            this.walk(value)
+        }
     }
 
     walk(obj) {
@@ -151,6 +155,15 @@ class Compile {
                 // 指令实际操作方法
                 this[dir] && this[dir](node, exp)
             }
+
+            // 事件处理
+            if(this.isEvent(attrName)) {
+                // @click="onClick"
+                const dir = attrName.substring(1) // click
+                // exp: onClick
+                // 事件监听
+                this.eventHandler(node, exp, dir)
+            }
         })
     }
 
@@ -188,6 +201,33 @@ class Compile {
         new Watcher(this.$vm, exp, function(val) {
             fn && fn(node, val)
         })
+    }
+
+    isEvent(dir) {
+        return dir.indexOf('@') === 0
+    }
+
+    eventHandler(node, exp, dir) {
+        // methods: { onClick: function() {} }
+        const fn = this.$vm.$options.methods && this.$vm.$options.methods[exp]
+        // bind是因为要当前的this指向当前组件实例
+        node.addEventListener(dir, fn.bind(this.$vm))
+    }
+
+    // k-model="xx"
+    model(node, exp) {
+        // updata方法只完成赋值和更新
+        this.update(node, exp, 'model')
+        // 事件监听
+        node.addEventListener('input', e=> {
+            // 将新的值赋值给数据
+            this.$vm[exp] = e.target.value
+        })
+    }
+
+    modelUpdater(node, value) {
+        // 表单元素赋值
+        node.value = value
     }
 
 }
